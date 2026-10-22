@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>demo_particle2d dev</title>
+    <style>
+      body { margin: 0; background: #0b0b0e; display: grid; place-items: center; height: 100vh }
+      canvas { grid-area: 1 / 1 }
+      .lil-gui.root { max-height: 100vh; overflow-y: auto }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      // The demo of particle2d: index.html, the manager truth and the scenes its row names all in this
+      // tab, one seat on them over a loopback, stepped on the page's clock, and a panel holding
+      // `world.particle2d`'s `hold` and render2d's camera, background and mosaic. `?scene=<scene>`
+      // enters that scene. The truths are kept on `window.__scenes` and the page on `window.__page` for
+      // the profilers (benchmarking-a-game). The frame rate is three's stats panel, the stats plugin, at
+      // the top left. The hall plays itself, so the seat binds no keys.
+      //
+      // The panel tweaks a copy of the scene's `world.particle2d`. A change is laid into the truth's
+      // world and the page's a quarter second after the last one, so the server's rules and the page's
+      // look read the same numbers. Nothing is written to disk: `copy particle2d JSON` copies the
+      // panel's numbers, for the scene file, and `reset to the file` puts the file's back.
+      //
+      // The render2d folder sets the page's camera, its background and its mosaic through render2d's
+      // calls, as they draw.
+      import { boot } from '#engine/engine.ts'
+      import { accept, load, manager, link, view } from '#addons/scenemanager/scenemanager.addon.ts'
+      import { loopback } from '#addons/loopback/loopback.addon.ts'
+      import GUI from 'lil-gui'
+      import { sim } from './demo_particle2d.sim.ts'
+      import { scene as main } from './main.sim.ts'
+      import file from './demo_particle2d.scene.json'
+
+      const clone = v => JSON.parse(JSON.stringify(v))
+      const params = new URLSearchParams(location.search)
+      file.prefabs.scenemanager.entry = params.get('scene') ?? file.prefabs.scenemanager.entry
+      // The file's numbers, as they were, for `reset to the file`.
+      const fileOwn = clone(main.world.particle2d)
+      const r2 = main.world.render2d
+
+      const dt = file.prefabs.engine.dt
+      const truth = boot(file, sim)
+      window.__scenes = await load(truth, import.meta.url)
+      let client
+      const page = view(link(loopback(accept(manager(truth)))), file, import.meta.url, (me, scene) => {
+        client = me
+        for (const surface of [me.plugins.render3d ?? me.plugins.render2d, me.plugins.ui]) {
+          if (!surface) continue
+          const canvas = document.createElement('canvas')
+          canvas.width = scene.prefabs.engine.width
+          canvas.height = scene.prefabs.engine.height
+          document.body.appendChild(canvas)
+          surface.mount(canvas)
+        }
+        me.plugins.stats?.mount(document.body)
+      })
+      window.__page = page
+      // The truth of the scene the seat is on.
+      const room = () => window.__scenes.get(chosen.scene)
+
+      // The panel: the scene, chosen from the manager's table, the page loaded again on it. Keys typed
+      // into it and the wheel turned over it reach neither this page nor the game.
+      const gui = new GUI({ title: 'demo_particle2d dev' })
+      for (const type of ['keydown', 'keyup', 'wheel']) gui.domElement.addEventListener(type, e => e.stopPropagation())
+      const chosen = { scene: file.prefabs.scenemanager.entry }
+      const reload = (key, value) => {
+        const url = new URL(location.href)
+        url.searchParams.set(key, value)
+        location.href = url.href
+      }
+      gui.add(chosen, 'scene', Object.keys(file.prefabs.scenemanager.scenes)).onChange(s => reload('scene', s))
+
+      // ---------- particle2d ----------
+
+      // The panel's copy of world.particle2d.
+      const own = clone(fileOwn)
+      // The panel's copy laid into the truth's world and the page's a quarter second after the last
+      // change.
+      let timer
+      const apply = () => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          for (const world of [room()?.world, client?.plugins.wire.scene.world]) if (world) Object.assign(world.particle2d, clone(own))
+        }, 250)
+      }
+
+      const pf = gui.addFolder('particle2d')
+      pf.add(own, 'hold', 0, 1, 0.01).name('hold, s an entry stays at least').onChange(apply)
+
+      gui.add({ copy: () => navigator.clipboard?.writeText(JSON.stringify(own, null, 2)) }, 'copy').name('copy particle2d JSON')
+      gui.add({ reset: () => {
+        Object.assign(own, clone(fileOwn))
+        for (const c of gui.controllersRecursive()) c.updateDisplay()
+        apply()
+      } }, 'reset').name('reset to the file')
+
+      // ---------- render2d ----------
+
+      const rf = gui.addFolder('render2d')
+      const r2d = () => client?.plugins.render2d
+      // The scene gives no background, so the canvas shows the page's, #0b0b0e, until one is picked.
+      const cam = { zoom: r2.zoom ?? 1, x: r2.look[0], y: r2.look[1], background: '#0b0b0e', mosaic: 1 }
+      rf.add(cam, 'zoom', 0.25, 4, 0.05).onChange(v => r2d()?.zoom(v))
+      rf.add(cam, 'x', 0, 960, 1).name('look x').onChange(() => r2d()?.look([cam.x, cam.y]))
+      rf.add(cam, 'y', 0, 600, 1).name('look y').onChange(() => r2d()?.look([cam.x, cam.y]))
+      rf.addColor(cam, 'background').onChange(v => r2d()?.background(parseInt(v.slice(1), 16)))
+      rf.add(cam, 'mosaic', 1, 16, 1).name('mosaic, px').onChange(v => r2d()?.mosaic(v, r2.layers))
+
+      let last = performance.now(), owed = 0
+      const loop = async now => {
+        owed += Math.min((now - last) / 1000, 0.25)
+        last = now
+        // A frame that throws is logged, and the next frame goes on.
+        try {
+          page.input()
+          while (owed >= dt) { truth.step(dt); owed -= dt }
+          await page.frame(owed / dt)
+        } catch (e) { console.error(e) }
+        requestAnimationFrame(loop)
+      }
+      requestAnimationFrame(loop)
+    </script>
+  </body>
+</html>

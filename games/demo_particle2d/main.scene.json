@@ -1,0 +1,94 @@
+{
+  "world": {
+    "seed": 1,
+    "defs": "demo_particle2d",
+    "particle2d": {
+      "effects": "effects2d",
+      "hold": 0.1
+    },
+    "loader": {
+      "assets": {
+        "demo_particle2d": {
+          "type": "json",
+          "url": "/games/demo_particle2d/assets/demo_particle2d.json",
+          "preload": true
+        },
+        "effects2d": {
+          "type": "json",
+          "url": "/games/demo_particle2d/assets/effects2d.json",
+          "preload": true
+        },
+        "smoke": {
+          "type": "sheet",
+          "url": "/games/demo_particle2d/assets/smoke.json",
+          "preload": true
+        },
+        "ember": {
+          "type": "sheet",
+          "url": "/games/demo_particle2d/assets/ember.json",
+          "preload": true
+        },
+        "star": {
+          "type": "sheet",
+          "url": "/games/demo_particle2d/assets/star.json",
+          "preload": true
+        }
+      }
+    },
+    "render2d": {
+      "ground": [[1, 0], [0, 1]],
+      "up": [0, -1],
+      "zoom": 1,
+      "look": [480, 300],
+      "layers": ["ground", "things", "effects"]
+    }
+  },
+  "plugins": [
+    "loader",
+    "scenemanager",
+    "player",
+    "particle2d",
+    "render2d",
+    "stats"
+  ],
+  "seats": 1,
+  "prefabs": {
+    "engine": {
+      "dt": 0.016666666666666666,
+      "width": 960,
+      "height": 600
+    },
+    "scenemanager": {
+      "out": {}
+    },
+    "loader": {},
+    "particle2d": {
+      "next": 1,
+      "live": []
+    },
+    "player": {
+      "seat": 0
+    },
+    "shelf": {
+      "t": 0
+    },
+    "kite": {
+      "pos": [0, 0],
+      "angle": 0,
+      "trail": 0
+    },
+    "bouncer": {
+      "y": 200,
+      "vy": 0,
+      "bounces": 0
+    }
+  },
+  "actors": [
+    { "is": "scenemanager" },
+    { "is": "loader" },
+    { "is": "particle2d" },
+    { "is": "shelf" },
+    { "is": "kite" },
+    { "is": "bouncer" }
+  ]
+}
