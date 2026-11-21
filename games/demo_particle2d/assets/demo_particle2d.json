@@ -1,33 +1,38 @@
 {
   "shelf": {
-    "floor": 540,
-    "ground": 2236970,
-    "plinth": { "width": 60, "height": 40, "colour": 3817290 },
+    "floor": 620,
+    "ground": 1316380,
+    "edge": 2632496,
+    "plinth": { "width": 70, "height": 44, "colour": 2895412, "top": 4210260 },
+    "hold": 0.4,
+    "drive": {
+      "pressure": { "low": 0.5, "high": 1.1, "period": 3 }
+    },
     "exhibits": [
-      { "effect": "fountain", "at": [80, 540, 40], "every": 1, "life": 1, "floor": 0 },
-      { "effect": "smoke", "at": [190, 540, 40], "every": 2, "life": 2 },
-      { "effect": "vortex", "at": [300, 540, 140], "every": 2 },
-      { "effect": "stars", "at": [410, 540, 120], "every": 1, "life": 1 },
-      { "effect": "firework", "at": [550, 540, 70], "every": 3, "scale": 1.2 },
-      { "effect": "jet", "at": [660, 540, 50], "every": 1, "life": 1, "dir": [1, -0.6] },
-      { "effect": "snow", "at": [770, 540, 380], "every": 1, "life": 1, "floor": 0 },
-      { "effect": "sparks", "at": [880, 540, 40], "every": 1.5, "floor": 0 }
+      { "effect": "torch", "at": [80, 620, 44], "stream": true },
+      { "effect": "sparks", "at": [230, 620, 44], "stream": true, "floor": 0 },
+      { "effect": "smoke", "at": [380, 620, 44], "stream": true },
+      { "effect": "vortex", "at": [530, 620, 220], "stream": true },
+      { "effect": "fountain", "at": [750, 620, 44], "stream": true, "floor": 0 },
+      { "effect": "firework", "at": [900, 620, 320], "every": 2.2 },
+      { "effect": "storm", "at": [1050, 620, 380], "stream": true },
+      { "effect": "blast", "at": [1200, 620, 44], "every": 3, "floor": 0 }
     ]
   },
   "kite": {
-    "centre": [480, 190],
-    "radius": 110,
+    "centre": [640, 230],
+    "radius": 150,
     "speed": 0.9,
-    "effect": "trail",
-    "size": 7,
-    "colour": 16764006
+    "effect": "comet",
+    "size": 6,
+    "colour": 16777215
   },
   "bouncer": {
-    "at": [480],
-    "floor": 540,
-    "radius": 16,
+    "at": [640],
+    "floor": 620,
+    "radius": 18,
     "gravity": 900,
-    "bounce": 480,
+    "bounce": 520,
     "colour": 14504755,
     "dust": "dust"
   }

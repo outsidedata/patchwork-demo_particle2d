@@ -13,21 +13,27 @@
     <script type="module">
       // The demo of particle2d: index.html, the manager truth and the scenes its row names all in this
       // tab, one seat on them over a loopback, stepped on the page's clock, and a panel holding
-      // `world.particle2d`'s `hold` and render2d's camera, background and mosaic. `?scene=<scene>`
-      // enters that scene. The truths are kept on `window.__scenes` and the page on `window.__page` for
-      // the profilers (benchmarking-a-game). The frame rate is three's stats panel, the stats plugin, at
-      // the top left. The hall plays itself, so the seat binds no keys.
+      // `world.particle2d`'s `hold`, the effects file's `cap`, the file's drivers, and render2d's camera,
+      // background and mosaic. `?scene=<scene>` enters that scene. The truths are kept on
+      // `window.__scenes` and the page on `window.__page` for the profilers (benchmarking-a-game). The
+      // frame rate is three's stats panel, the stats plugin, at the top left. The hall plays itself from
+      // the first frame, so the seat binds no keys.
       //
-      // The panel tweaks a copy of the scene's `world.particle2d`. A change is laid into the truth's
-      // world and the page's a quarter second after the last one, so the server's rules and the page's
-      // look read the same numbers. Nothing is written to disk: `copy particle2d JSON` copies the
-      // panel's numbers, for the scene file, and `reset to the file` puts the file's back.
+      // The panel tweaks a copy of the scene's `world.particle2d`, laid into the truth's world and the
+      // page's a quarter second after the last change, so the server's ledger and the page read the same
+      // `hold`. The effects file's `cap` is written into the page's own decoded copy of the file, which
+      // particle2d reads every frame. Each driver of the file is shown at its value this frame; held, the
+      // page drives it at the panel's number (particle2d's `drive`) over the shelf's and the file's, and let
+      // go it goes back to them. `particles` is how many the page draws. Nothing is written to disk: `copy
+      // world.particle2d JSON` copies the panel's numbers, for the scene file, and `reset to the file` puts
+      // the file's back.
       //
       // The render2d folder sets the page's camera, its background and its mosaic through render2d's
       // calls, as they draw.
       import { boot } from '#engine/engine.ts'
       import { accept, load, manager, link, view } from '#addons/scenemanager/scenemanager.addon.ts'
       import { loopback } from '#addons/loopback/loopback.addon.ts'
+      import { prepared } from '#plugins/loader/loader.sim.ts'
       import GUI from 'lil-gui'
       import { sim } from './demo_particle2d.sim.ts'
       import { scene as main } from './main.sim.ts'
@@ -85,38 +91,80 @@
           for (const world of [room()?.world, client?.plugins.wire.scene.world]) if (world) Object.assign(world.particle2d, clone(own))
         }, 250)
       }
+      // The effects file's own numbers, as the tab's one decoded copy of it gives them (the page's
+      // client decodes a copy of its own, which the panel writes), and the panel's copy of them, written
+      // into the page's decoded copy of the file a quarter second after the last change.
+      const fileEffects = await prepared(main.world, own.effects)
+      const fileTop = { cap: fileEffects.cap }
+      const top = clone(fileTop)
+      let topTimer
+      const applyTop = () => {
+        clearTimeout(topTimer)
+        topTimer = setTimeout(() => {
+          const effects = client?.plugins.loader.get(own.effects)
+          if (effects) Object.assign(effects, top)
+        }, 250)
+      }
 
       const pf = gui.addFolder('particle2d')
       pf.add(own, 'hold', 0, 1, 0.01).name('hold, s an entry stays at least').onChange(apply)
+      pf.add(top, 'cap', 100, 20000, 100).name('cap particles').onChange(applyTop)
+      const shown = { particles: 0 }
+      pf.add(shown, 'particles').listen().disable()
 
-      gui.add({ copy: () => navigator.clipboard?.writeText(JSON.stringify(own, null, 2)) }, 'copy').name('copy particle2d JSON')
+      // Each driver of the file: its value this frame, and, held, the number the page drives it at.
+      const df = gui.addFolder('drivers')
+      const drivers = Object.keys(fileEffects.drivers ?? {})
+      const now = Object.fromEntries(drivers.map(n => [n, 0]))
+      const holding = Object.fromEntries(drivers.map(n => [n, { held: false, value: typeof fileEffects.drivers[n] === 'number' ? fileEffects.drivers[n] : 0 }]))
+      const driveOne = n => {
+        const p = client?.plugins.particle2d
+        if (!p) return
+        if (holding[n].held) p.drive(n, holding[n].value)
+        else p.drive(n)
+      }
+      for (const n of drivers) {
+        const f = df.addFolder(n)
+        f.add(now, n).name('now').listen().disable()
+        f.add(holding[n], 'held').name('held by the page').onChange(() => driveOne(n))
+        f.add(holding[n], 'value', 0, 2, 0.01).onChange(() => driveOne(n))
+      }
+
+      gui.add({ copy: () => navigator.clipboard?.writeText(JSON.stringify(own, null, 2)) }, 'copy').name('copy world.particle2d JSON')
       gui.add({ reset: () => {
         Object.assign(own, clone(fileOwn))
+        Object.assign(top, clone(fileTop))
         for (const c of gui.controllersRecursive()) c.updateDisplay()
         apply()
+        applyTop()
       } }, 'reset').name('reset to the file')
 
       // ---------- render2d ----------
 
       const rf = gui.addFolder('render2d')
       const r2d = () => client?.plugins.render2d
-      // The scene gives no background, so the canvas shows the page's, #0b0b0e, until one is picked.
-      const cam = { zoom: r2.zoom ?? 1, x: r2.look[0], y: r2.look[1], background: '#0b0b0e', mosaic: 1 }
+      const cam = { zoom: r2.zoom ?? 1, x: r2.look[0], y: r2.look[1], background: r2.background, mosaic: 1 }
       rf.add(cam, 'zoom', 0.25, 4, 0.05).onChange(v => r2d()?.zoom(v))
-      rf.add(cam, 'x', 0, 960, 1).name('look x').onChange(() => r2d()?.look([cam.x, cam.y]))
-      rf.add(cam, 'y', 0, 600, 1).name('look y').onChange(() => r2d()?.look([cam.x, cam.y]))
+      rf.add(cam, 'x', 0, 1280, 1).name('look x').onChange(() => r2d()?.look([cam.x, cam.y]))
+      rf.add(cam, 'y', 0, 720, 1).name('look y').onChange(() => r2d()?.look([cam.x, cam.y]))
       rf.addColor(cam, 'background').onChange(v => r2d()?.background(parseInt(v.slice(1), 16)))
       rf.add(cam, 'mosaic', 1, 16, 1).name('mosaic, px').onChange(v => r2d()?.mosaic(v, r2.layers))
+      rf.close()
 
       let last = performance.now(), owed = 0
-      const loop = async now => {
-        owed += Math.min((now - last) / 1000, 0.25)
-        last = now
+      const loop = async now_ => {
+        owed += Math.min((now_ - last) / 1000, 0.25)
+        last = now_
         // A frame that throws is logged, and the next frame goes on.
         try {
           page.input()
           while (owed >= dt) { truth.step(dt); owed -= dt }
           await page.frame(owed / dt)
+          const p = client?.plugins.particle2d
+          if (p) {
+            shown.particles = p.count
+            for (const n of drivers) now[n] = Math.round((p.drivers[n] ?? 0) * 1000) / 1000
+          }
         } catch (e) { console.error(e) }
         requestAnimationFrame(loop)
       }

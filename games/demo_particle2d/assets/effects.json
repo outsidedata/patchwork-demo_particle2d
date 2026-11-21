@@ -1,0 +1,74 @@
+{
+  "cap": 8000,
+  "layer": "effects",
+  "drivers": { "pressure": 1 },
+  "forceGenerators": {
+    "rise": [{ "direction": [0, -30], "turbulence": 90, "noiseFrequency": 0.012, "noiseScroll": [0, -25] }],
+    "heat": [{ "direction": [0, -25], "turbulence": 120, "noiseFrequency": 0.015, "noiseScroll": [0, -40] }],
+    "column": [{ "pull": 25, "anchor": "effect", "toAxis": true, "axis": [0, -1], "range": 400, "falloff": 1 }],
+    "air": [{ "drag": 0.6, "dragBySpeed": 0.004, "wind": [25, 0] }],
+    "gravity": [{ "direction": [0, 600] }],
+    "blastwave": [{ "pull": -6000, "anchor": "effect", "range": 120, "falloff": 2, "overAge": [[0, 1], [0.12, 0]] }],
+    "whirl": [{ "swirl": 2.4, "anchor": "effect" }, { "pull": 140, "anchor": "effect", "shell": 40, "range": 160 }]
+  },
+  "effects": {
+    "torch": [
+      { "n": [2, 3], "every": 0.03, "life": [0.5, 0.8], "shape": "glow", "size": [26, 40], "grows": [[0, 1], [0.5, 0.8], [1, 0.25]], "dir": [0, -1], "spread": 0.25, "speed": [90, 150], "jitter": [10, 0], "tints": [[0, 16775388], [0.3, 16765562], [0.7, 16740645], [1, 9445394]], "alphas": [[0, 0], [0.1, 1], [1, 0]], "gain": 1.6, "add": true },
+      { "n": [2, 3], "every": 0.03, "life": [0.7, 1.1], "shape": "puff", "size": [28, 44], "grows": [[0, 0.8], [1, 0.3]], "dir": [0, -1], "spread": 0.2, "speed": [70, 130], "jitter": [10, 0], "tints": [[0, 16769162], [0.5, 16744448], [1, 7350030]], "alphas": [[0, 0], [0.15, 0.9], [1, 0]], "spin": 2, "add": true },
+      { "n": [1, 2], "every": 0.05, "life": [1.5, 2.5], "shape": "spark", "size": [5, 9], "dir": [0, -1], "spread": 0.6, "speed": [110, 220], "drag": 0.3, "jitter": [14, 0], "forces": { "rise": 0.6 }, "tints": [[0, 16769162], [0.6, 16740645], [1, 9445394]], "alphas": [[0, 1], [0.7, 1], [1, 0]], "gain": 2, "add": true },
+      { "n": [1, 2], "every": 0.08, "after": 0.3, "life": [3, 4.5], "shape": "puff2", "size": [36, 54], "grows": [[0, 1], [1, 4]], "dir": [0, -1], "spread": 0.3, "speed": [40, 70], "drag": 0.4, "box": [0, -90, 0, -90], "forces": { "rise": 1 }, "tints": [[0, 4605510], [1, 6974058]], "alphas": [[0, 0], [0.2, 0.5], [1, 0]], "spin": 0.5 }
+    ],
+    "sparks": [
+      { "n": [6, 9], "every": 0.02, "life": [1.2, 2], "shape": "streak", "stretch": true, "size": [14, 22], "dir": [0.35, -1], "spread": 0.5, "speed": [260, 420], "g": 700, "drag": 0.1, "bounce": 0.45, "tints": [[0, 16777215], [0.15, 16773240], [0.5, 16750848], [1, 12530706]], "alphas": [[0, 1], [0.85, 1], [1, 0]], "gain": 2, "add": true },
+      { "every": 0.06, "life": [0.12, 0.12], "shape": "glow", "size": [40, 60], "tint": 16757575, "alphas": [[0, 1], [1, 0]], "gain": 1.5, "add": true },
+      { "every": 0.15, "life": [2, 3], "shape": "puff2", "size": [20, 30], "grows": [[0, 0.6], [1, 3]], "dir": [0, -1], "spread": 0.4, "speed": [30, 60], "drag": 0.2, "forces": { "rise": 0.5 }, "tint": 6316128, "alphas": [[0, 0], [0.15, 0.4], [1, 0]], "spin": 0.4 }
+    ],
+    "smoke": [
+      { "n": [1, 2], "every": 0.07, "life": [5, 7], "shape": "puff2", "size": [40, 60], "grows": [[0, 0.6], [0.2, 1.4], [1, 4]], "dir": [0, -1], "spread": 0.3, "speed": [60, 100], "drag": 0.25, "jitter": [12, 0], "forces": { "heat": 1, "column": 1, "air": 0.3 }, "tints": [[0, 2762274], [0.5, 5921370], [1, 9078144]], "alphas": [[0, 0], [0.1, 0.9], [0.6, 0.6], [1, 0]], "spin": 0.4 },
+      { "every": 0.05, "life": [0.4, 0.6], "shape": "puff", "size": [26, 38], "grows": [[0, 1], [1, 0.4]], "dir": [0, -1], "spread": 0.3, "speed": [40, 80], "jitter": [10, 0], "tints": [[0, 16769162], [0.5, 16744448], [1, 8003077]], "alphas": [[0, 1], [1, 0]], "gain": 1.6, "spin": 2, "add": true },
+      { "n": [1, 2], "every": 0.1, "life": [1.5, 2.5], "shape": "spark", "size": [3, 6], "dir": [0, -1], "spread": 0.5, "speed": [40, 120], "jitter": [12, 0], "forces": { "heat": 1.2 }, "tints": [[0, 16738816], [1, 11550736]], "alphas": [[0, 1], [0.7, 1], [1, 0]], "gain": 2, "add": true }
+    ],
+    "vortex": [
+      { "n": [3, 4], "every": 0.02, "life": [2.5, 3.5], "shape": "spark", "size": [4, 8], "box": [-80, -80, 80, 80], "forces": { "whirl": 1 }, "tints": [[0, 13402367], [0.5, 8015103], [1, 16729258]], "alphas": [[0, 0], [0.15, 1], [0.8, 1], [1, 0]], "gain": 2, "add": true },
+      { "every": 0.05, "life": [1.5, 2], "shape": "glow", "size": [8, 14], "box": [-70, -70, 70, 70], "forces": { "whirl": 1.3 }, "tint": 11171071, "alphas": [[0, 0], [0.2, 0.8], [1, 0]], "gain": 1.5, "add": true },
+      { "every": 0.1, "life": [1, 1], "shape": "glow", "size": [70, 90], "tint": 8015103, "alphas": [[0, 0], [0.5, 0.6], [1, 0]], "gain": 1.2, "add": true },
+      { "every": 0.4, "life": [1.2, 1.2], "shape": "ring", "size": [40, 40], "grows": [[0, 0.5], [1, 4]], "tint": 13402367, "alphas": [[0, 0.6], [1, 0]], "add": true }
+    ],
+    "fountain": [
+      { "n": [3, 4], "every": 0.015, "life": [1.4, 1.8], "shape": "glow", "size": [10, 16], "dir": [0, -1], "spread": 0.18, "speed": ["380 * pressure", "430 * pressure"], "g": 600, "bounce": 0.25, "tints": [[0, 16777215], [0.3, 10542335], [1, 2123946]], "alphas": [[0, 1], [0.8, 0.8], [1, 0]], "gain": 1.3, "add": true },
+      { "every": 0.03, "life": [0.5, 0.8], "shape": "puff", "size": [14, 22], "grows": [[0, 0.5], [1, 2]], "dir": [0, -1], "spread": 0.5, "speed": ["60 * pressure", "120 * pressure"], "g": 200, "tint": 12972543, "alphas": [[0, 0.5], [1, 0]], "add": true }
+    ],
+    "firework": [
+      { "life": [0.18, 0.18], "shape": "glow", "size": [160, 160], "tint": 16777215, "alphas": [[0, 1], [1, 0]], "gain": 2, "add": true },
+      { "life": [0.6, 0.6], "shape": "ring", "size": [40, 40], "grows": [[0, 0.4], [1, 5]], "tint": 16761035, "alphas": [[0, 0.9], [1, 0]], "add": true },
+      { "n": [26, 32], "life": [1.6, 2.2], "shape": "star", "size": [14, 22], "box": [-4, -4, 4, 4], "outward": [160, 300], "forces": { "air": 1, "gravity": 0.25 }, "tints": [[0, 16777215], [0.2, 16743129], [1, 8050687]], "alphas": [[0, 1], [0.7, 1], [1, 0]], "gain": 2, "spin": 3, "add": true, "carry": "glitter" }
+    ],
+    "glitter": [
+      { "every": 0.03, "life": [0.5, 0.9], "shape": "spark", "size": [3, 5], "speed": [0, 20], "inherit": 0.2, "g": 120, "tints": [[0, 16777215], [1, 16743129]], "alphas": [[0, 1], [1, 0]], "gain": 2, "add": true }
+    ],
+    "storm": [
+      { "n": [1, 2], "every": 0.12, "life": [2.5, 3.5], "shape": "puff2", "size": [70, 100], "box": [-90, -30, 90, 30], "grows": [[0, 0.7], [1, 1.3]], "speed": [0, 10], "forces": { "air": 0.2 }, "tints": [[0, 3159121], [1, 4278106]], "alphas": [[0, 0], [0.2, 0.8], [0.8, 0.8], [1, 0]], "spin": 0.2 },
+      { "every": 0.18, "life": [0.15, 0.3], "size": [0, 0], "box": [-110, -40, 110, 250], "carry": "arc" },
+      { "every": 0.18, "life": [0.12, 0.12], "shape": "glow", "size": [180, 240], "box": [-60, -20, 60, 20], "tint": 9418495, "alphas": [[0, 0.8], [1, 0]], "gain": 1.5, "add": true }
+    ],
+    "arc": [
+      { "every": 0.06, "life": [0.04, 0.07], "shape": "bolt", "beam": true, "size": [20, 36], "tint": 13820415, "gain": 2.5, "add": true },
+      { "after": 0.03, "every": 0.06, "life": [0.04, 0.07], "shape": "bolt2", "beam": true, "size": [20, 36], "tint": 13820415, "gain": 2.5, "add": true }
+    ],
+    "blast": [
+      { "life": [0.15, 0.15], "shape": "glow", "size": [220, 220], "tint": 16777215, "alphas": [[0, 1], [1, 0]], "gain": 2, "add": true },
+      { "n": [50, 60], "life": [0.6, 1.4], "shape": "puff", "size": [30, 50], "box": [-12, -12, 12, 12], "grows": [[0, 0.5], [0.2, 1.3], [1, 1.8]], "forces": { "blastwave": [0.4, 1], "air": 1, "heat": 0.6 }, "tints": [[0, 16777215], [0.15, 16769696], [0.4, 16747050], [0.75, 7346462], [1, 1312260]], "alphas": [[0, 1], [0.7, 0.9], [1, 0]], "spin": 1.5, "add": true },
+      { "n": [10, 14], "life": [1.5, 2.5], "size": [5, 9], "box": [-8, -8, 8, 0], "spin": 6, "bounce": 0.4, "forces": { "blastwave": [0.6, 1], "air": 0.4, "gravity": 1 }, "tint": 5126954 },
+      { "n": [20, 26], "after": 0.15, "life": [3, 5], "shape": "puff2", "size": [40, 60], "box": [-30, -20, 30, 10], "grows": [[0, 0.8], [1, 3]], "forces": { "heat": 1, "column": 0.6, "air": 0.5 }, "tints": [[0, 3815994], [1, 7105644]], "alphas": [[0, 0], [0.15, 0.7], [1, 0]], "spin": 0.3 },
+      { "n": [14, 18], "life": [0.6, 1], "shape": "streak", "stretch": true, "size": [18, 30], "box": [-6, -6, 6, 6], "outward": [300, 520], "forces": { "air": 0.6, "gravity": 0.6 }, "tints": [[0, 16777215], [1, 16740645]], "alphas": [[0, 1], [1, 0]], "gain": 2, "add": true }
+    ],
+    "comet": [
+      { "every": 0.016, "life": [0.6, 1], "shape": "glow", "size": [16, 26], "grows": [[0, 1], [1, 0.2]], "speed": [0, 15], "tints": [[0, 16777215], [0.3, 16764006], [1, 16729156]], "alphas": [[0, 1], [1, 0]], "gain": 1.5, "add": true },
+      { "every": 0.03, "life": [0.8, 1.4], "shape": "spark", "size": [3, 6], "speed": [10, 40], "inherit": 0.5, "g": 60, "tint": 16774600, "alphas": [[0, 1], [1, 0]], "gain": 2, "add": true }
+    ],
+    "dust": [
+      { "n": [14, 18], "life": [0.6, 0.9], "shape": "puff", "size": [14, 22], "grows": [[0, 0.6], [1, 2]], "box": [-14, -2, 14, 0], "outward": [60, 140], "g": 120, "drag": 2.5, "tint": 13153928, "alphas": [[0, 0.8], [1, 0]] },
+      { "life": [0.35, 0.35], "shape": "ring", "size": [30, 30], "grows": [[0, 0.5], [1, 3]], "tint": 15132390, "alphas": [[0, 0.7], [1, 0]], "add": true }
+    ]
+  }
+}
